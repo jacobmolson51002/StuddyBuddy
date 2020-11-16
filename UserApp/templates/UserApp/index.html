@@ -1,0 +1,62 @@
+{% load static %}
+
+<!DOCTYPE html>
+<head>
+<title>Home</title>
+<link rel='stylesheet' type='text/css' href="{% static 'css/userapp.css' %}">
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<script src='{% static "js/jquery.js" %}'></script>
+<script>
+$('document').ready(function(){
+	$('#searchButton').click(function(){
+		question = $('#questionBar').val();
+		$.ajax({
+			url: '{% url "searchQuestion" %}',
+			type: 'POST',
+			data: {question:question, csrfmiddlewaretoken: '{{ csrf_token }}'},
+			success: function(data){
+				$('#answerBox').html(data);
+			}
+		});
+	});
+	/*$("#questionBar").keydown(function(e) {
+		while($(this).outerHeight() < this.scrollHeight + parseFloat($(this).css("borderTopWidth")) + parseFloat($(this).css("borderBottomWidth"))) {
+        $(this).height($(this).height()+1);
+    };*/
+});	
+
+</script>
+</head>
+<body>
+<div id='loginBar'>
+<div id='logo'>
+<font>SB</font>
+</div>
+<div id='loginOrRegister'>
+<font id='loginButton'>Login </font>
+<font id='registerButton'> Register</font>
+</div>
+</div>
+
+<div id='searchDiv'>
+<!--<font>Ask Away</font>-->
+<form method='post'>
+{% csrf_token %}
+<h1 style='color: white;'>Ask Away</h1><p>
+<textarea id='questionBar' name='searchQuestion' rows='1' cols='50'></textarea><p><script src='{% static "js/autosize-master/dist/autosize.js" %}'></script><script>autosize(document.getElementById('questionBar'));</script>
+<button type='button' id='searchButton'>Search Question</button><p>
+</form>
+<div id='answerBox'>
+
+</div>
+</div>
+
+
+
+</body>
+
+
+
+
+
+</html>

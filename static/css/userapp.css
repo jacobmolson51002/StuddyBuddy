@@ -1,0 +1,77 @@
+body {
+	margin: 0;
+	background-color: #0F0A0A;  /*#0F0A0A*/
+	text-align: center;
+	position: relative;
+}
+#loginBar{
+	height: 53px;
+	width: 100%;
+	border-bottom: 1px solid gray !important;
+	display: grid;
+	grid-template-columns: 30px auto 200px;
+	grid-template-areas:
+		"logo empty loginRegister";
+}
+#logo{
+	grid-area: logo;
+	width: 100%;
+	height: 100%;
+	color: white;
+	text-align: center;
+	position: relative;
+	font-size: 25px;
+}
+#logo font{
+	position: absolute;
+	top: 12.5px;
+}
+#loginOrRegister{
+	grid-area: loginRegister;
+	width: 100%;
+	height: 100%;
+	color: white;
+	text-align: center;
+	font-size: 18px;
+	padding-top: 16px;
+}
+#loginOrRegister font{
+	margin-top: 16px;
+}
+#loginButton {
+	padding-right: 4px;
+	border-right: 2px solid white;
+}
+#registerButton {
+	padding-left: 6px;
+}
+#searchDiv{
+	width: 50%;
+	height: 500px;
+	position: absolute;
+	margin-top: 10%;
+	margin-left: 25%;
+	border: 1px solid white;
+	display: grid;
+	grid-template-rows: 1fr 1fr 1fr;
+	grid-template-areas:
+		"title"
+		"searchBar"
+		"answer";
+}
+#answerBox{
+	color: white;	
+}
+#questionBar{
+	background-color: #0F0A0A;
+	color: white;
+	font-size: 17px;
+	outline: none;
+	resize: none;
+	border-bottom: 1px solid white;
+	border-right: none;
+	border-left: none;
+	border-top: none;
+	padding-left: 2px;
+	overflow: none;
+}
