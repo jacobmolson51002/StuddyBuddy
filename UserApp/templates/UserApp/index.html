@@ -4,6 +4,12 @@
 <head>
 <title>Home</title>
 <link rel='stylesheet' type='text/css' href="{% static 'css/userapp.css' %}">
+<link href='https://fonts.googleapis.com/css?family=ABeeZee' rel='stylesheet'>
+<style>
+body {
+    font-family: 'ABeeZee';font-size: 22px;
+}
+</style>
 <meta name='viewport' content='width=device-width, initial-scale=1.0'>
 <script src='{% static "js/jquery.js" %}'></script>
 <script>
@@ -43,7 +49,10 @@ $('document').ready(function(){
 <!--<font>Ask Away</font>-->
 <form method='post'>
 {% csrf_token %}
-<h1 style='color: white;'>Ask Away</h1><p>
+<div>
+<h1 style='color: white;'>Ask Anything</h1><p>
+<font style='font-size: 15px; color: white;'>$0.50/question or $5/month for unlimited questions</font>
+</div><p>
 <textarea id='questionBar' name='searchQuestion' rows='1' cols='50'></textarea><p><script src='{% static "js/autosize-master/dist/autosize.js" %}'></script><script>autosize(document.getElementById('questionBar'));</script>
 <button type='button' id='searchButton'>Search</button><p>
 </form>

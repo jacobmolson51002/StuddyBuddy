@@ -17,10 +17,29 @@ answer = answers.get()
 def hello(request):
 	return render(request, 'UserApp/index.html')
 	
+def safeSearch(text):
+	newText = ''
+	for letter in text:
+		if letter == '\'':
+			newText += '\\' + '\''
+		else:
+			newText += letter;
+	return newText
+	
 def searchQuestion(request):
 	question = request.POST.get('question')
-	newLine = question[7]
-	print('this is at index 7: \n')
+	question = safeSearch(question)
+	question.lower()
+	question = question.replace('\n', ' ')
+	question = question.replace('?', '')
+	question = question.replace('.', '')
+	question = question.replace(',', '')
+	question = question.replace(';', '')
+	while True:
+		if question.find('  ') != -1:
+			question = question.replace('  ', ' ')
+		else:
+			break
 	print(question);
 	questionID = generateQuestionKey(question)
 	print(questionID)

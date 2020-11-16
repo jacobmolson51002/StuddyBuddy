@@ -3,6 +3,7 @@ body {
 	background-color: #0F0A0A;  /*#0F0A0A*/
 	text-align: center;
 	position: relative;
+	font-weight: bold;
 }
 #loginBar{
 	height: 53px;
@@ -60,31 +61,30 @@ body {
 		"answer";
 }
 #searchButton{
-	transition: 0.1s;
+	transition: 0.05s;
 	background-color: #0F0A0A;
-	border: 2px solid white;
+	border: 2px solid turquoise;
 	width: 130px;
 	height: 55px;
 	text-align: center;
-	color: white;
+	color: turquoise;
 	font-size: 25px;
 	/*font-weight: bold;*/
 	font-weight: normal;
 }
 #searchButton:hover{
 	cursor: pointer;
-	transition: 0.1s;
-	background-color: white;
-	color: #0F0A0A;
-	font-weight: bold;
+	transition: 0.05s;
+	background-color: turquoise;
+	color: black;
 }
 #answerBox{
 	color: white;	
 }
 #questionBar{
-	margin-top: 50px;
+	margin-top: 70px;
 	background-color: #0F0A0A;
-	color: white;
+	color: turquoise;
 	font-size: 34px;
 	outline: none;
 	resize: none;
@@ -96,5 +96,6 @@ body {
 	overflow: none;
 }
 form h1{
-	font-size: 50px;
+	font-size: 60px;
+	margin-bottom: -5px;
 }
