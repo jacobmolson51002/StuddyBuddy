@@ -19,7 +19,9 @@ def hello(request):
 	
 def searchQuestion(request):
 	question = request.POST.get('question')
-	print(question)
+	newLine = question[7]
+	print('this is at index 7: \n')
+	print(question);
 	questionID = generateQuestionKey(question)
 	print(questionID)
 	answer = db.collection('math').document(questionID)
