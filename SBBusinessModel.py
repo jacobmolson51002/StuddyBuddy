@@ -1,10 +1,12 @@
 # use this to calculate monthly earnings
 import math
+import random
 
-def monthlyEarnings(subscribers, nonSubscribers, totalPayUse, totalUse, tutors, successQuestions):
+def monthlyEarnings(perQuestion, monthly, subscribers, nonSubscribers, totalPayUse, totalUse, tutors, successQuestions):
 	print()
-	revenue = (subscribers * 5) + (totalPayUse * 0.18)
-	print('Total Revenue: ' + str(revenue))
+	costPerQuestion = (perQuestion - 0.3) * 0.971
+	revenue = (subscribers * monthly) + (totalPayUse * costPerQuestion)
+	print('Total Revenue: ' + str(revenue) + '  --  ($5 * ' + str(subscribers) + ' users) + ($' + str(costPerQuestion) + ' * ' + str(totalPayUse) + ' non-subscriber questions))')
 	userAuth = 0.01 * (subscribers + nonSubscribers)
 	print('		- $' + str(userAuth) + ' : user authentication cost(FireBase)')
 	numInstances = 1
@@ -12,9 +14,9 @@ def monthlyEarnings(subscribers, nonSubscribers, totalPayUse, totalUse, tutors, 
 	numInstances += totalUsers // 500
 	instanceCost = 48.46 * numInstances
 	print('		- $' + str(instanceCost) + ' : amazon ec2 c6g.large cost (' + str(numInstances) + ') instances')
-	storageCost = 0.18 * (successQuestions // 1000)
+	storageCost = 0.18 * (successQuestions / 1000)
 	print('		- $' + str(storageCost) + ' : FireStore question & answer storage costs')
-	reads = 0.06 * ((totalUse * 10) // 100000)
+	reads = 0.06 * ((totalUse * tutors) / 100000)
 	print('		- $' + str(reads) + ' : total cost of db reads')
 	profit = revenue - userAuth - instanceCost - reads
 	print()
@@ -24,13 +26,42 @@ def monthlyEarnings(subscribers, nonSubscribers, totalPayUse, totalUse, tutors, 
 print('StuddyBuddy business model testing')
 print('Service costs: $0.50/question or $5/month for unlimted questions')
 print()
-subscribers = int(input('enter number of paying subscribers: '))
-nonSubscribers = int(input('enter number of non-subscribed users that used services: '))
-totalPayUse = int(input('enter the total number of questions non-subscribers asked: '))
-totalUse = int(input('enter the total number of questions asked: '))
-tutors = int(input('enter the numnber of tutors: '))
-successQuestions = int(input('enter total number of successful question and answers: '))
-profit = monthlyEarnings(subscribers, nonSubscribers, totalPayUse, totalUse, tutors, successQuestions)
+fastOrDetailed = input('do you want the fast version or detailed version?: ')
+costPerQuestion = float(input('cost per question?: $'))
+monthlyCost = float(input('cost per month?: $'))
+subscribers = float(input('enter number of paying subscribers: '))
+nonSubscribers = float(input('enter number of non-subscribed users that used services: '))
+profit = 0
+if fastOrDetailed == 'fast':
+	goodOrBad = input('good turnout or badturnout (use wise?): ')
+	if goodOrBad == 'good':
+		avgPayUse = random.randint(4, 7)
+		totalPayUse = nonSubscribers * avgPayUse
+		
+		avgSubscribeUse = random.randint(7, 11)
+		totalUse = subscribers * avgSubscribeUse
+		 
+		tutors = float((subscribers + nonSubscribers)) * 0.25
+		
+		successQuestions = float(totalPayUse + totalUse) * 0.95
+		profit = monthlyEarnings(costPerQuestion, monthlyCost, subscribers, nonSubscribers, totalPayUse, totalUse, tutors, successQuestions)
+	else:
+		avgPayUse = random.randint(1,4)
+		totalPayUse = nonSubscribers * avgPayUse
+		
+		avgSubscribeUse = random.randint(3,7)
+		totalUse = subscribers * avgSubscribeUse
+		 
+		tutors = float((subscribers + nonSubscribers)) * 0.25
+		
+		successQuestions = float(totalPayUse + totalUse) * 0.95
+		profit = monthlyEarnings(costPerQuestion, monthlyCost, subscribers, nonSubscribers, totalPayUse, totalUse, tutors, successQuestions)
+else:
+	totalPayUse = float(input('enter the total number of questions non-subscribers asked: '))
+	totalUse = float(input('enter the total number of questions asked: '))
+	tutors = float(input('enter the number of tutors: '))
+	successQuestions = float(input('enter total number of successful question and answers: '))
+	profit = monthlyEarnings(costPerQuestion, monthlyCost, subscribers, nonSubscribers, totalPayUse, totalUse, tutors, successQuestions)
 print()
 decision = input('see growth over months? (y/n): ')
 if decision == 'y':
@@ -47,8 +78,8 @@ if decision == 'y':
 		avgProfitIncrease = 0
 		for i in range(1, months+1):
 			print('Month ' + str(i))
-			lastMonth = monthlyEarnings((subscribers * math.pow(subscriberGrowth,i-1)), (nonSubscribers * math.pow(nonSubscriberGrowth,i-1)), (totalPayUse * math.pow(totalPayUseGrowth,i-1)), (totalUse * math.pow(totalUseGrowth,i-1)), (tutors * math.pow(tutorGrowth,i-1)), (successQuestions * math.pow(successQuestionsGrowth,i-1)))
-			thisMonth = monthlyEarnings((subscribers * math.pow(subscriberGrowth,i)), (nonSubscribers * math.pow(nonSubscriberGrowth,i)), (totalPayUse * math.pow(totalPayUseGrowth,i)), (totalUse * math.pow(totalUseGrowth,i)), (tutors * math.pow(tutorGrowth,i)), (successQuestions * math.pow(successQuestionsGrowth,i)))
+			lastMonth = monthlyEarnings(costPerQuestion, monthlyCost, (subscribers * math.pow(subscriberGrowth,i-1)), (nonSubscribers * math.pow(nonSubscriberGrowth,i-1)), (totalPayUse * math.pow(totalPayUseGrowth,i-1)), (totalUse * math.pow(totalUseGrowth,i-1)), (tutors * math.pow(tutorGrowth,i-1)), (successQuestions * math.pow(successQuestionsGrowth,i-1)))
+			thisMonth = monthlyEarnings(costPerQuestion, monthlyCost, (subscribers * math.pow(subscriberGrowth,i)), (nonSubscribers * math.pow(nonSubscriberGrowth,i)), (totalPayUse * math.pow(totalPayUseGrowth,i)), (totalUse * math.pow(totalUseGrowth,i)), (tutors * math.pow(tutorGrowth,i)), (successQuestions * math.pow(successQuestionsGrowth,i)))
 			totalProfit += thisMonth
 			avgProfitIncrease += (thisMonth / lastMonth)
 		print()

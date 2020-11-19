@@ -2,12 +2,17 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 import firebase_admin
-from firebase_admin import credentials, firestore
+from firebase_admin import credentials, firestore, storage
 import random
 from urllib.parse import quote
+import time
 
 cred = credentials.Certificate('static/ServiceAccountKey.json')
-defaultApp = firebase_admin.initialize_app(cred)
+firebase_admin.initialize_app(cred, {
+    'storageBucket': 'gs://studdybuddy-5021a.appspot.com/.appspot.com'
+})
+#defaultApp = firebase_admin.initialize_app(cred)
+#set up storage bucket to get txt files
 
 db = firestore.client()
 answers = db.collection('answeredquestions').document('math')
@@ -24,12 +29,22 @@ def safeSearch(text):
 			newText += '\\' + '\''
 		else:
 			newText += letter;
+	if newText[0] != ' ':
+		newText = ' ' + newText
 	return newText
+
+def isLineOnlySpaces(line):
+	answer = True
+	for letter in line:
+		if letter != ' ':
+			answer = False
+			break
+	return answer
 	
 def searchQuestion(request):
 	question = request.POST.get('question')
 	question = safeSearch(question)
-	question.lower()
+	question = question.lower()
 	question = question.replace('\n', ' ')
 	question = question.replace('?', '')
 	question = question.replace('.', '')
@@ -43,15 +58,30 @@ def searchQuestion(request):
 	print(question);
 	questionID = generateQuestionKey(question)
 	print(questionID)
-	answer = db.collection('math').document(questionID)
+	answer = ''
+	'''answer = db.collection('math').document(questionID)
 	answer = answer.get()
 	if answer.exists:
 		answer = answer.to_dict()
 		answer = answer['answer']
+		filePath = 'static/answers/' + answer
+		
+		answer = open('')
 	else:
 		answer = 'We did not find the answer.'
+	return HttpResponse(answer)'''
+	filePath = 'static/answers/' + questionID + '.txt'
+	file = open(filePath, 'r')
+	if file != None:
+		for line in file:
+			if isLineOnlySpaces(line) == False:
+				answer += line + '<p>'
+			else:
+				answer += '<p>'
+	else:
+		answer = 'We did not find that answer.'
+	file.close()
 	return HttpResponse(answer)
-		
 	
 def generateQuestionKey(text):
 	uniqueNum = 0

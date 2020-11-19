@@ -16,13 +16,15 @@ body {
 $('document').ready(function(){
 	$('#searchButton').click(function(){
 		question = $('#questionBar').val();
-		alert(question);
 		$.ajax({
 			url: '{% url "searchQuestion" %}',
 			type: 'POST',
 			data: {question:question, csrfmiddlewaretoken: '{{ csrf_token }}'},
 			success: function(data){
 				$('#answerBox').html(data);
+				//$('#content').css('overflow', 'scroll');
+				$("#content").animate({scrollTop: 1000}, 'fast');
+				$('#content').css('overflow', 'hidden');
 			}
 		});
 	});
@@ -45,6 +47,7 @@ $('document').ready(function(){
 </div>
 </div>
 
+<div id='content'>
 <div id='searchDiv'>
 <!--<font>Ask Away</font>-->
 <form method='post'>
@@ -56,8 +59,8 @@ $('document').ready(function(){
 <textarea id='questionBar' name='searchQuestion' rows='1' cols='50'></textarea><p><script src='{% static "js/autosize-master/dist/autosize.js" %}'></script><script>autosize(document.getElementById('questionBar'));</script>
 <button type='button' id='searchButton'>Search</button><p>
 </form>
+</div>
 <div id='answerBox'>
-
 </div>
 </div>
 
