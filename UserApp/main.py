@@ -24,6 +24,8 @@ def safeSearch(text):
 			newText += '\\' + '\''
 		else:
 			newText += letter;
+    if newText[0] != ' ':
+        newText = ' ' + newText
 	return newText
 	
 def searchQuestion(request):

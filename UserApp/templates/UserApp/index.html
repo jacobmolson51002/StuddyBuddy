@@ -51,7 +51,7 @@ $('document').ready(function(){
 {% csrf_token %}
 <div>
 <h1 style='color: white;'>Ask Anything</h1><p>
-<font style='font-size: 15px; color: white;'>$0.50/question or $5/month for unlimited questions</font>
+<font style='font-size: 15px; color: turquoise;'>$0.50/question or $5/month for unlimited questions</font>
 </div><p>
 <textarea id='questionBar' name='searchQuestion' rows='1' cols='50'></textarea><p><script src='{% static "js/autosize-master/dist/autosize.js" %}'></script><script>autosize(document.getElementById('questionBar'));</script>
 <button type='button' id='searchButton'>Search</button><p>
