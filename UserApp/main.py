@@ -6,18 +6,33 @@ from firebase_admin import credentials, firestore, storage
 import random
 from urllib.parse import quote
 import time
+import os.path
+import pyrebase
 
 cred = credentials.Certificate('static/ServiceAccountKey.json')
+'''
 firebase_admin.initialize_app(cred, {
     'storageBucket': 'gs://studdybuddy-5021a.appspot.com/.appspot.com'
 })
 #defaultApp = firebase_admin.initialize_app(cred)
 #set up storage bucket to get txt files
+bucket = storage.bucket()
 
 db = firestore.client()
 answers = db.collection('answeredquestions').document('math')
 answer = answers.get()
-#print('Math Answer: {}'.format(answer.to_dict()))
+#print('Math Answer: {}'.format(answer.to_dict()))'''
+config = {
+	'apiKey': 'AIzaSyCSNJDwjQ7_TOHluDbrETq6zZroEA-x3N8',
+	'authDomain': 'studdybuddy-5021a.firebaseapp.com',
+	'databaseURL': 'https://studdybuddy-5021a.firebaseio.com',
+	'projectId': 'studdybuddy-5021a',
+	'storageBucket': 'studdybuddy-5021a.appspot.com'
+}
+firebase = pyrebase.initialize_app(config)
+files = firebase.storage()
+
+
 
 def hello(request):
 	return render(request, 'UserApp/index.html')
@@ -70,23 +85,27 @@ def searchQuestion(request):
 	else:
 		answer = 'We did not find the answer.'
 	return HttpResponse(answer)'''
-	filePath = 'static/answers/' + questionID + '.txt'
-	file = open(filePath, 'r')
-	if file != None:
+	filePath = 'answers/' + questionID + '.txt'
+	fileName = questionID + '.txt'
+	files.child(filePath).download('', fileName)
+	
+	if os.path.isfile(fileName):
+		file = open(fileName, 'r')
 		for line in file:
 			if isLineOnlySpaces(line) == False:
 				answer += line + '<p>'
 			else:
 				answer += '<p>'
+		file.close()
+		os.remove(fileName)
 	else:
 		answer = 'We did not find that answer.'
-	file.close()
 	return HttpResponse(answer)
 	
 def generateQuestionKey(text):
 	uniqueNum = 0
 	id = ''
-	keyChars = ['q','w','a','s','z','x','e','r','d','f','c','t','y','g','h','v','b','u','j','n','i','k','m','o','p','l','Q','A','Z','W','S','X','E','D','C','R','F','V','T','G','B','Y','H','N','U','J','M','I','K','O','L','P','5','6','1','2','8','0','9','3','4','7','#','!','@','-','_']
+	keyChars = ['q','w','a','s','z','x','e','r','d','f','c','t','y','g','h','v','b','u','j','n','i','k','m','o','p','l','Q','A','Z','W','S','X','E','D','C','R','F','V','T','G','B','Y','H','N','U','J','M','I','K','O','L','P','5','6','1','2','8','0','9','3','4','7','-']
 	for letter in text:
 		for i in range(128):
 			if letter == chr(i):

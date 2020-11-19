@@ -5,7 +5,7 @@ body {
 	position: relative;
 	font-weight: bold;
 	display: grid;
-	grid-template-columns: auto 975px auto;
+	grid-template-columns: auto 981px auto;
 	grid-template-rows: 53px calc(100% - 53px);
 	grid-template-areas:
 		'loginBar loginBar loginBar'
@@ -88,7 +88,7 @@ body {
 	/*font-weight: bold;*/
 	font-weight: normal;
 	position: absolute;
-	right: 0;
+	right: 3px;
 }
 #searchButton:hover{
 	cursor: pointer;
