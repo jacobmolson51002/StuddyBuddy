@@ -3,5 +3,6 @@ from . import main
 
 urlpatterns = [
 	path('', main.hello, name='main'),
-	path('searchQuestion', main.searchQuestion, name='searchQuestion'),
+	path('search', main.search, name='search'),
+    path('question/<str:questionID>/', main.question, name='question')
 ]

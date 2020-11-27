@@ -1,0 +1,58 @@
+{% load static %}
+
+<!DOCTYPE html>
+<head>
+<title>Home</title>
+<link rel='stylesheet' type='text/css' href="{% static 'css/userapp.css' %}">
+<link href='https://fonts.googleapis.com/css?family=ABeeZee' rel='stylesheet'>
+<style>
+body {
+    font-family: 'ABeeZee';font-size: 22px;
+}
+</style>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<script src='{% static "js/jquery.js" %}'></script>
+<script>
+$('document').ready(function(){
+    
+});	
+
+</script>
+</head>
+<body>
+<div id='loginBar'>
+<div id='logo'>
+<font>SB</font>
+</div>
+<div id='loginOrRegister'>
+<font id='loginButton'>Login </font>
+<font id='registerButton'> Register</font>
+</div>
+</div>
+
+<div id='content'>
+<font size='5' color='white'>
+{% for line in question %}
+    {{ line }}<p>
+{% endfor %}
+</font><p>
+<br>
+<br>
+<br>
+<font size='6' color='white'>Answer:</font><p>
+<font size='5' color='white'>
+{% for line in answer %}
+    {{ line }}<p>
+{% endfor %}    
+</font><p>
+</div>
+
+
+
+</body>
+
+
+
+
+
+</html>

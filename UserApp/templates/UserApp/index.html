@@ -1,4 +1,5 @@
 {% load static %}
+{% load removeSpaces %}
 
 <!DOCTYPE html>
 <head>
@@ -9,27 +10,158 @@
 body {
     font-family: 'ABeeZee';font-size: 22px;
 }
+.searchable input{
+    font-family: 'ABeeZee';
+}
+#categories font{
+    font-family: 'ABeeZee';
+}
 </style>
 <meta name='viewport' content='width=device-width, initial-scale=1.0'>
 <script src='{% static "js/jquery.js" %}'></script>
 <script>
 $('document').ready(function(){
+    $('#questionBar').focus();
 	$('#searchButton').click(function(){
-		question = $('#questionBar').val();
-		alert(question);
+		var question = $('#questionBar').val();
+        var school = $('#school').val();
+        var classVar = $('#class').val();
+        var category = $('#category').val();
 		$.ajax({
-			url: '{% url "searchQuestion" %}',
+			url: '{% url "search" %}',
 			type: 'POST',
-			data: {question:question, csrfmiddlewaretoken: '{{ csrf_token }}'},
+			data: {question:question, school:school, class:classVar, category:category, csrfmiddlewaretoken: '{{ csrf_token }}'},
 			success: function(data){
-				$('#answerBox').html(data);
+                if(data != "not found"){
+                    originalUrl = '{% url "question" "questionToSearch" %}';
+                    newUrl = originalUrl.replace('questionToSearch', data);
+                    window.location.assign(newUrl);
+                }else{
+                    $("#answerNotFound").css('display', 'initial');
+                    $("#content").animate({scrollTop: 1000}, 'fast');
+				    $('#content').css('overflow', 'hidden');
+                }
+				
 			}
 		});
 	});
+    
+    function filterFunction(that, event) {
+        let container, input, filter, li, input_val;
+        container = $(that).closest(".searchable");
+        input_val = container.find("input").val().toUpperCase();
+
+        if (["ArrowDown", "ArrowUp", "Enter"].indexOf(event.key) != -1) {
+            keyControl(event, container)
+        } else {
+            li = container.find("ul li");
+            li.each(function (i, obj) {
+                if ($(this).text().toUpperCase().indexOf(input_val) > -1) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+
+            container.find("ul li").removeClass("selected");
+            setTimeout(function () {
+                container.find("ul li:visible").first().addClass("selected");
+            }, 1)
+        }
+    }
+    function getClassList(school){
+        var idName = school.replace(/\s+/g, '');
+        if(idName == 'None'){
+            idName = 'selectSchool';
+        }
+        $('#classDiv ul').each(function(){
+            $(this).removeClass('list'); 
+        });
+        var element = document.getElementById(idName);
+        $(element).addClass('list');
+        $('#class').val('');
+    }
+    function keyControl(e, container) {
+        if (e.key == "ArrowDown") {
+
+            if (container.find("ul li").hasClass("selected")) {
+                if (container.find("ul li:visible").index(container.find("ul li.selected")) + 1 < container.find("ul li:visible").length) {
+                    container.find("ul li.selected").removeClass("selected").nextAll().not('[style*="display: none"]').first().addClass("selected");
+                }
+
+            } else {
+                container.find("ul li:first-child").addClass("selected");
+            }
+
+        } else if (e.key == "ArrowUp") {
+
+            if (container.find("ul li:visible").index(container.find("ul li.selected")) > 0) {
+                container.find("ul li.selected").removeClass("selected").prevAll().not('[style*="display: none"]').first().addClass("selected");
+            }
+        } else if (e.key == "Enter") {
+            var selection = container.find("ul li.selected").text();
+            container.find("input").val(selection).blur();
+            //onSelect(selection);
+            if(container.children('input').attr('id') == 'school'){
+                getClassList(selection); 
+            }
+        }
+    }
+    $(document).on("click", ".listItem", function () {
+        if($(this).parents('ul').siblings('input').attr('id') == 'school' && $(this).text() == 'None'){
+            $(this).closest(".searchable").find("input").val('');
+        }else{
+            $(this).closest(".searchable").find("input").val($(this).text());
+        }
+        if($(this).parents('ul').siblings('input').attr('id') == 'school'){
+            var school = $(this).text();
+            getClassList(school);
+        }
+    });
+
+    $(".searchable input").focus(function () {
+        $(this).closest(".searchable").find(".list").show();
+        $(this).closest(".searchable").find(".list li").show();
+    });
+    $(".searchable input").blur(function () {
+        let that = this;
+        setTimeout(function () {
+            $(that).closest(".searchable").find("ul").hide();
+        }, 100);
+    });
+
+    $(".searchable ul li").hover(function () {
+        $(this).closest(".searchable").find("ul li.selected").removeClass("selected");
+        $(this).addClass("selected");
+    });
 	/*$("#questionBar").keydown(function(e) {
 		while($(this).outerHeight() < this.scrollHeight + parseFloat($(this).css("borderTopWidth")) + parseFloat($(this).css("borderBottomWidth"))) {
         $(this).height($(this).height()+1);
     };*/
+    $('#school').keyup(function(){
+        filterFunction(this,event);
+    });
+    $('#class').keyup(function(){
+        filterFunction(this,event);
+    });
+    $('#category').keyup(function(){
+        filterFunction(this,event);
+    });
+    var ar = new Array(33,34,35,36,37,38,39,40);
+
+    $(document).keydown(function(e) {
+         var key = e.which;
+          //console.log(key);
+          //if(key==35 || key == 36 || key == 37 || key == 39)
+          if($.inArray(key,ar) > -1) {
+              e.preventDefault();
+          }
+    });
+    $('.searchable').hover(function(){
+        if($(this).children('ul').is(":hidden")){
+            $(this).css('cursor', 'pointer');
+        }
+    });
 });	
 
 </script>
@@ -45,19 +177,58 @@ $('document').ready(function(){
 </div>
 </div>
 
-<div id='searchDiv'>
-<!--<font>Ask Away</font>-->
-<form method='post'>
-{% csrf_token %}
-<div>
-<h1 style='color: white;'>Ask Anything</h1><p>
-<font style='font-size: 15px; color: turquoise;'>$0.50/question or $5/month for unlimited questions</font>
-</div><p>
-<textarea id='questionBar' name='searchQuestion' rows='1' cols='50'></textarea><p><script src='{% static "js/autosize-master/dist/autosize.js" %}'></script><script>autosize(document.getElementById('questionBar'));</script>
-<button type='button' id='searchButton'>Search</button><p>
-</form>
+<div id='content'>
+    <div id='searchDiv'>
+    <!--<font>Ask Away</font>-->
+    <form method='post'>
+        {% csrf_token %}
+        <div>
+            <h1 style='color: white;'>Ask Anything</h1><p>
+            <font style='font-size: 15px; color: turquoise;'>$0.50/question or $5/month for unlimited questions</font>
+        </div><p>
+        
+        <textarea id='questionBar' name='searchQuestion' rows='1' cols='50'></textarea><p><script src='{% static "js/autosize-master/dist/autosize.js" %}'></script><script>autosize(document.getElementById('questionBar'));</script>
+        
+        <div id='categories'>
+            <font id='filterDiv' >Optional Filters: </font>
+            <div class="searchable" id='schoolDiv'>
+                <input type="text" id='school' placeholder="School" onkeyup="filterFunction(this,event)" onkeypress="return event.keyCode!=13" autocomplete="off">
+                <ul class='list'>
+                    <li class='listItem'>None</li>
+                    {% for key,value in schools.items %}
+                        <li class='listItem'>{{ key }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="searchable" id='classDiv'>
+                <input type="text" id='class' placeholder="Class" onkeyup="filterFunction(this,event)" onkeypress="return event.keyCode!=13" autocomplete="off">
+                <ul class='list' id='selectSchool'>
+                    <li>Select school</li>
+                </ul>
+                {% for school, classes in schools.items %}
+                <ul id='{{ school|removeSpaces }}'>
+                    {% for class in classes %}
+                    <li class='listItem'>{{ class }}</li>
+                    {% endfor %}
+                </ul>
+                {% endfor %}
+            </div>
+            <!--<div id='orDiv'><font size='5' color='white' ></font></div>-->
+            <div class="searchable" id='categoryDiv'>
+                <input type="text" id='category' placeholder="Category" onkeyup="filterFunction(this,event)" onkeypress="return event.keyCode!=13" autocomplete="off">
+                <ul>
+                    <li>Missouri S&t</li>
+                    <li>Saint Louis Univerity</li>
+                </ul>
+            </div>
+        </div><p>
+        <button type='button' id='searchButton'>Search</button><p>
+        </form>
+    </div>
 <div id='answerBox'>
-
+    <div id='answerNotFound' style='display: none;'>
+        <font color='white' size='6'>You're the first to ask this question!</font>
+    </div>
 </div>
 </div>
 

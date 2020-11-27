@@ -4,8 +4,17 @@ body {
 	text-align: center;
 	position: relative;
 	font-weight: bold;
+	display: grid;
+	grid-template-columns: auto 981px auto;
+	grid-template-rows: 53px calc(100% - 53px);
+	grid-template-areas:
+		'loginBar loginBar loginBar'
+		'empty1 content empty2';
 }
+
+/*top bar styling*/
 #loginBar{
+	grid-area: loginBar;
 	height: 53px;
 	width: 100%;
 	border-bottom: 1px solid gray !important;
@@ -46,40 +55,35 @@ body {
 #registerButton {
 	padding-left: 6px;
 }
-#searchDiv{
-	margin-bottom: 100px;
-	width: 1320px;
+
+
+/*main content styling*/
+#content{
+	grid-area: content;
+	margin-top: 100px;
+	overflow: hidden;
 	height: 700px;
-	position: absolute;
-	margin-top: 7%;
-	margin-left: 15%;
+	-ms-overflow-style: none;
+}
+#content::-webkit-scrollbar {
+  display: none;
+}
+
+/*search bar styling*/
+#searchDiv{
+	/*margin-bottom: 100px;
+	width: 1320px;*/
+    overflow: hidden;
+	height: 100%;
+    position: relative;
+	width: 100%;
 	display: grid;
 	grid-template-rows: 1fr 1fr 1fr;
 	grid-template-areas:
 		"title"
 		"searchBar"
 		"answer";
-}
-#searchButton{
-	transition: 0.05s;
-	background-color: #0F0A0A;
-	border: 2px solid turquoise;
-	width: 130px;
-	height: 55px;
-	text-align: center;
-	color: turquoise;
-	font-size: 25px;
-	/*font-weight: bold;*/
-	font-weight: normal;
-}
-#searchButton:hover{
-	cursor: pointer;
-	transition: 0.05s;
-	background-color: turquoise;
-	color: black;
-}
-#answerBox{
-	color: white;	
+    border-bottom: 1px solid white;
 }
 #questionBar{
 	margin-top: 70px;
@@ -95,6 +99,151 @@ body {
 	padding-left: 2px;
 	overflow: none;
 }
+
+/*category drop down styling*/
+#categories{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 300px auto auto auto 50px;
+    text-align: left;
+    
+}
+#categories font{
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: left;
+}
+#categories select{
+    background-color: #0F0A0A;
+    border: none;
+    text-align: center;
+    font-size: 15px;
+    color: white;
+    outline: none;
+}
+#categories select option{
+    background-color: white;
+}
+div.searchable {
+    text-align: center;
+    width: 100%;
+    padding: none;
+    outline: none;
+    box-shadow: none;
+    position: relative;
+}
+/*#schoolDiv::after{
+    position: absolute;
+    content: "ˇ";
+    color: white;
+    top: 8px;
+    right: 65px;
+    height: 20px;
+    width: 20px;    
+}
+#classDiv::after{
+    position: absolute;
+    content: "ˇ";
+    color: white;
+    top: 8px;
+    right: 72px;
+    height: 20px;
+    width: 20px;    
+}
+#categoryDiv::after{
+    position: absolute;
+    content: "ˇ";
+    color: white;
+    top: 8px;
+    right: 57px;
+    height: 20px;
+    width: 20px;    
+}
+#filterDiv{
+    grid-area: filter;
+}
+#schoolDiv{
+    grid-area: school;
+}
+#classDiv{
+    grid-area: class;
+}
+#orDiv{
+    grid-area: or;
+}
+#categoryDiv{
+    grid-area: category;
+}*/
+.searchable input {
+    text-align: center;
+    width: auto;
+    margin-left: 2px;
+    outline: none;
+    font-size: 20px;
+    color: turquoise;
+    background-color: #0F0A0A;
+    box-shadow: none;
+    border: none;
+    width: 100%;
+}
+.searchable input::placeholder{
+    color: #6e6e6e;
+}
+.searchable ul {
+    display: none;
+    list-style-type: none;
+    background-color: #0F0A0A;
+    max-height: 180px;
+    margin: 0;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    padding: 0;
+    width: 100%;
+    text-align: center;
+}
+
+.searchable ul li {
+    padding-top: 8px;
+    padding-left: 3px;
+    font-size: 18px;
+    cursor: pointer;
+    color: #6e6e6e;
+}
+
+.searchable ul li.selected {
+    color: white;
+}
+/*button styling */
+#searchButton{
+	transition: 0.05s;
+	background-color: #0F0A0A;
+	border: 2px solid turquoise;
+	width: 130px;
+	height: 55px;
+	text-align: center;
+	color: turquoise;
+	font-size: 25px;
+	/*font-weight: bold;*/
+	font-weight: normal;
+    outline: none;
+    margin-top: 70px;
+}
+#searchButton:hover{
+	cursor: pointer;
+	transition: 0.05s;
+	background-color: turquoise;
+	color: black;
+}
+
+/*answer box styling */
+#answerBox{
+	color: white;	
+	width: 100%;
+	height: 100%;	
+}
+
+/*form styling */
 form h1{
 	font-size: 60px;
 	margin-bottom: -5px;

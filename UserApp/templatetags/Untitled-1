@@ -1,0 +1,3 @@
+def removeSpaces(name):
+    name = name.replace(' ', '')
+    return name
