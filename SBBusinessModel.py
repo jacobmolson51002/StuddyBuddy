@@ -56,10 +56,27 @@ def monthlyEarnings(perQuestion, monthly, subscribers, nonSubscribers, categorie
     tutorDocs = (tutors // 45000) + 1
     reads = (0.06 * ((totalQuestions * tutorDocs) / 100000))
     
-    #determine total profit
-    profit = revenue - userAuth - instanceCost - reads
+    #determine money left over after expenses
+    leftOver = revenue - userAuth - instanceCost - reads
     
-    return [revenue, monthly, subscribers, costPerQuestion, totalPayUse, nonSubscribers, userAuth, instanceCost, numInstances, storageCost, reads, totalQuestions, tutors, profit]
+    #determine tutor payout
+    tutorPayouts = leftOver * 0.2
+    leftOver -= tutorPayouts
+    
+    #determine ad money
+    ads = 0.0
+    if ((leftOver * 0.7) * 0.75) > 500:
+        ads = leftOver * 0.3
+        leftOver -= ads
+    
+    #determine taxes
+    taxes = leftOver * 0.25
+    
+    #determine total profit
+    profit = leftOver - taxes
+    
+    
+    return [revenue, monthly, subscribers, costPerQuestion, totalPayUse, nonSubscribers, userAuth, instanceCost, numInstances, storageCost, reads, totalQuestions, tutors, tutorPayouts, ads, taxes, profit]
 print()
 print('StuddyBuddy business model testing')
 print()
@@ -90,10 +107,20 @@ if fastOrDetailed == 'fast':
 
         #print db reads
         print('		- $' + str(results[10]) + ' : total cost of db reads (' + str(results[11]) + ' total questions * ' + str(results[12]) + ' average tutors per category)')
+        
+        #print tutor payout
+        print('     - $' + str(results[13]) + ' : tutor payout')
+        
+        #print ad money if any
+        if results[14] > 0.0:
+            print('     - $' + str(results[14]) + ' : ad money for next month')
+        
+        #print taxes
+        print('     - $' + str(results[15]) + ' : monthly taxes')
 
         #print total profit
         print()
-        print('		= $' + str(results[13]))
+        print('		= $' + str(results[16]))
     elif turnout == 'bad':
         results = monthlyEarnings(costPerQuestion, monthlyCost, subscribers, nonSubscribers,
         categories, turnout = 'bad')
@@ -111,11 +138,21 @@ if fastOrDetailed == 'fast':
         print('		- $' + str(results[9]) + ' : FireStore question & answer storage costs')
 
         #print db reads
-        print('		- $' + str(results[10]) + ' : total cost of db reads')
+        print('		- $' + str(results[10]) + ' : total cost of db reads (' + str(results[11]) + ' total questions * ' + str(results[12]) + ' average tutors per category)')
+
+        #print tutor payout
+        print('     - $' + str(results[13]) + ' : tutor payout')
+        
+        #print ad money if any
+        if results[14] > 0.0:
+            print('     - $' + str(results[14]) + ' : ad money for next month')
+        
+        #print taxes
+        print('     - $' + str(results[15]) + ' : monthly taxes')
 
         #print total profit
         print()
-        print('		= $' + str(results[13]))
+        print('		= $' + str(results[16]))
     elif turnout == 'normal':
         results = monthlyEarnings(costPerQuestion, monthlyCost, subscribers, nonSubscribers,
         categories, turnout = 'normal')
@@ -133,11 +170,21 @@ if fastOrDetailed == 'fast':
         print('		- $' + str(results[9]) + ' : FireStore question & answer storage costs')
 
         #print db reads
-        print('		- $' + str(results[10]) + ' : total cost of db reads')
+        print('		- $' + str(results[10]) + ' : total cost of db reads (' + str(results[11]) + ' total questions * ' + str(results[12]) + ' average tutors per category)')
+
+        #print tutor payout
+        print('     - $' + str(results[13]) + ' : tutor payout')
+        
+        #print ad money if any
+        if results[14] > 0.0:
+            print('     - $' + str(results[14]) + ' : ad money for next month')
+        
+        #print taxes
+        print('     - $' + str(results[15]) + ' : monthly taxes')
 
         #print total profit
         print()
-        print('		= $' + str(results[13]))      
+        print('		= $' + str(results[16]))     
 else:
     totalPayUse = float(input('enter the total number of questions non-subscribers asked: '))
     totalUse = float(input('enter the total number of questions asked: '))
@@ -156,11 +203,21 @@ else:
     print('		- $' + str(results[9]) + ' : FireStore question & answer storage costs')
     
     #print db reads
-    print('		- $' + str(results[10]) + ' : total cost of db reads')
+    print('		- $' + str(results[10]) + ' : total cost of db reads (' + str(results[11]) + ' total questions * ' + str(results[12]) + ' average tutors per category)')
     
+    #print tutor payout
+    print('     - $' + str(results[13]) + ' : tutor payout')
+        
+    #print ad money if any
+    if results[14] > 0.0:
+        print('     - $' + str(results[14]) + ' : ad money for next month')
+        
+    #print taxes
+    print('     - $' + str(results[15]) + ' : monthly taxes')
+
     #print total profit
     print()
-    print('		= $' + str(results[11]))   
+    print('		= $' + str(results[16]))
     
 print()
 decision = input('see growth over months? (y/n): ')
@@ -170,6 +227,7 @@ if decision == 'y':
         subscriberGrowth = float(input('rate of subscriber growth (each month)?: '))
         nonSubscriberGrowth = float(input('rate of non-subscriber use growth (each month)?: '))
         tutorGrowth = float(input('rate of tutor growth (each month)?: '))
+        categoryGrowth = float(input('rate of category growth (each month)?: '))
         
         
 		
@@ -177,8 +235,8 @@ if decision == 'y':
         avgProfitIncrease = 0
         for i in range(1, months+1):
             print('Month ' + str(i))
-            lastMonth = monthlyEarnings(costPerQuestion, monthlyCost, (subscribers * math.pow(subscriberGrowth,i-1)), (nonSubscribers * math.pow(nonSubscriberGrowth,i-1)), turnout = 'normal')
-            results = monthlyEarnings(costPerQuestion, monthlyCost, (subscribers * math.pow(subscriberGrowth,i)), (nonSubscribers * math.pow(nonSubscriberGrowth,i)), turnout = 'normal')
+            lastMonth = monthlyEarnings(costPerQuestion, monthlyCost, (subscribers * math.pow(subscriberGrowth,i-1)), (nonSubscribers * math.pow(nonSubscriberGrowth,i-1)), (categories * math.pow(categoryGrowth,i-1)), turnout = 'normal')
+            results = monthlyEarnings(costPerQuestion, monthlyCost, (subscribers * math.pow(subscriberGrowth,i)), (nonSubscribers * math.pow(nonSubscriberGrowth,i)), (categories * math.pow(categoryGrowth,i)), turnout = 'normal')
             
             #print revenue
             print('Total Revenue: ' + str(results[0]) + '  --  ($' + str(results[1]) + ' * ' + str(results[2]) + ' users) + ($' + str(results[3]) + ' * ' + str(results[4]) + ' non-subscriber questions) - $' + str(0.3 * results[5]) + ' stripe fee per question)')
@@ -191,16 +249,26 @@ if decision == 'y':
             
             #print storage cost
             print('		- $' + str(results[9]) + ' : FireStore question & answer storage costs')
-            
+
             #print db reads
-            print('		- $' + str(results[10]) + ' : total cost of db reads')
+            print('		- $' + str(results[10]) + ' : total cost of db reads (' + str(results[11]) + ' total questions * ' + str(results[12]) + ' average tutors per category)')
             
+            #print tutor payout
+            print('     - $' + str(results[13]) + ' : tutor payout')
+
+            #print ad money if any
+            if results[14] > 0.0:
+                print('     - $' + str(results[14]) + ' : ad money for next month')
+
+            #print taxes
+            print('     - $' + str(results[15]) + ' : monthly taxes')
+
             #print total profit
             print()
-            print('		= $' + str(results[11]))              
+            print('		= $' + str(results[16]))             
             
-            totalProfit += results[11]
-            avgProfitIncrease += (results[11] / lastMonth[11])
+            totalProfit += results[16]
+            avgProfitIncrease += (results[16] / lastMonth[16])
         print()
         print('after ' + str(months) + ' months, total profits are: ' + str(totalProfit))
         avgProfitIncrease = avgProfitIncrease / months

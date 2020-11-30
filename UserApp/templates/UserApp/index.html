@@ -21,7 +21,13 @@ body {
 <script src='{% static "js/jquery.js" %}'></script>
 <script>
 $('document').ready(function(){
+    var windowHeight = ($(window).height() - 53).toString();
+    var contentHeight = windowHeight + 'px';
+    var contentWidth = ($('#content').width() * 0.8).toString();
+    var checkoutWidth = 
+    $('#content').css('height', contentHeight);
     $('#questionBar').focus();
+    $('#checkout')
 	$('#searchButton').click(function(){
 		var question = $('#questionBar').val();
         var school = $('#school').val();
@@ -37,8 +43,21 @@ $('document').ready(function(){
                     newUrl = originalUrl.replace('questionToSearch', data);
                     window.location.assign(newUrl);
                 }else{
-                    $("#answerNotFound").css('display', 'initial');
-                    $("#content").animate({scrollTop: 1000}, 'fast');
+                    /*
+                    var currentContentHeight = ($('#content').height() * 0.5).toString();
+                    var currentContentWidth = ($('#content').width() * 0.6).toString();
+                    var finalQuestionHeight = currentContentHeight + 'px';
+                    var finalQuestionWidth = currentContentWidth + 'px';*/
+                    var currentContentHeight = ($('#content').height() * 0.6).toString();
+                    var currentContentWidth = ($('#content').width() * 0.8).toString();
+                    var checkoutHeight = currentContentHeight + 'px';
+                    var checkoutWidth = currentContentWidth + 'px';
+                    $('#checkout').css('height', checkoutHeight);
+                    $('#checkout').css('width', checkoutWidth);
+                    $('#finalQuestionTextArea').val(question);
+                    $('#finalQuestionTextArea').css('width', '100%');
+                    //$("#answerNotFound").css('display', 'grid');
+                    $("#content").animate({scrollTop: contentHeight}, 'fast');
 				    $('#content').css('overflow', 'hidden');
                 }
 				
@@ -122,12 +141,26 @@ $('document').ready(function(){
     $(".searchable input").focus(function () {
         $(this).closest(".searchable").find(".list").show();
         $(this).closest(".searchable").find(".list li").show();
+        $(this).attr('placeholder', ''); 
     });
     $(".searchable input").blur(function () {
         let that = this;
         setTimeout(function () {
             $(that).closest(".searchable").find("ul").hide();
         }, 100);
+        if($(this).attr('id', 'school')){
+            //setTimeout(function () {
+                $(this).attr('placeholder', 'School'); 
+            //}, 99);
+        }else if($(this).attr('id', 'class')){
+            //setTimeout(function () {
+                $(this).attr('placeholder', 'Class'); 
+           // }, 99);
+        }else{
+            //setTimeout(function () {
+                $(this).attr('placeholder', 'Category'); 
+            //}, 99);
+        }
     });
 
     $(".searchable ul li").hover(function () {
@@ -147,6 +180,69 @@ $('document').ready(function(){
     $('#category').keyup(function(){
         filterFunction(this,event);
     });
+    $('#checkoutOptions font').on('mouseover', function(){
+        $(this).css('cursor', 'pointer');
+        if($(this).hasClass('selected') == false){
+            $(this).css('color', '#eeeeee'); 
+        }
+    });
+    $('#checkoutOptions font').on('mouseout', function(){
+        if($(this).hasClass('selected') == false){
+            $(this).css('color', 'gray'); 
+        }
+    });
+    $('#payNow').click(function(){
+        selectOptions($(this));
+    });
+    $('#payLater').click(function(){
+        selectOptions($(this));
+    });
+    $('#loginOption').click(function(){
+        selectOptions($(this));
+    });
+    $('#goUnlimited').click(function(){
+        selectOptions($(this));
+    });
+    function selectOptions(option){
+        $('.checkoutScreens').each(function(){
+            $(this).hide();
+        });
+        $('#checkoutOptions font').each(function(){
+            if($(this).hasClass('selected')){
+                $(this).removeClass('selected');
+                $(this).css('color', 'gray');
+            }
+        });
+        option.css('color', 'turquoise');
+        option.addClass('selected');
+        if(option.attr('id') == 'payNow'){
+            $('#payNowInfo').show();
+        }else if(option.attr('id') == 'payLater'){
+            $('#payLaterInfo').show();
+        }else if(option.attr('id') == 'loginOption'){
+            $('#loginInfo').show();
+        }else{
+            $('#goUnlimitedInfo').show();
+        }
+    }
+    /*$('.categoryInput').focus(function(){
+        $(this).attr('placeholder', ''); 
+    });
+    $('.categoryInput').blur(function(){
+        if($(this).attr('id', 'school')){
+            setTimeout(function () {
+                $(this).attr('placeholder', 'School'); 
+            }, 100);
+        }else if($(this).attr('id', 'class')){
+            setTimeout(function () {
+                $(this).attr('placeholder', 'Class'); 
+            }, 100);
+        }else{
+            setTimeout(function () {
+                $(this).attr('placeholder', 'Category'); 
+            }, 100);
+        }
+    });*/
     var ar = new Array(33,34,35,36,37,38,39,40);
 
     $(document).keydown(function(e) {
@@ -192,7 +288,7 @@ $('document').ready(function(){
         <div id='categories'>
             <font id='filterDiv' >Optional Filters: </font>
             <div class="searchable" id='schoolDiv'>
-                <input type="text" id='school' placeholder="School" onkeyup="filterFunction(this,event)" onkeypress="return event.keyCode!=13" autocomplete="off">
+                <input class='categoryInput' type="text" id='school' placeholder="School" onkeyup="filterFunction(this,event)" onkeypress="return event.keyCode!=13" autocomplete="off">
                 <ul class='list'>
                     <li class='listItem'>None</li>
                     {% for key,value in schools.items %}
@@ -201,7 +297,7 @@ $('document').ready(function(){
                 </ul>
             </div>
             <div class="searchable" id='classDiv'>
-                <input type="text" id='class' placeholder="Class" onkeyup="filterFunction(this,event)" onkeypress="return event.keyCode!=13" autocomplete="off">
+                <input class='categoryInput' type="text" id='class' placeholder="Class" onkeyup="filterFunction(this,event)" onkeypress="return event.keyCode!=13" autocomplete="off">
                 <ul class='list' id='selectSchool'>
                     <li>Select school</li>
                 </ul>
@@ -215,7 +311,7 @@ $('document').ready(function(){
             </div>
             <!--<div id='orDiv'><font size='5' color='white' ></font></div>-->
             <div class="searchable" id='categoryDiv'>
-                <input type="text" id='category' placeholder="Category" onkeyup="filterFunction(this,event)" onkeypress="return event.keyCode!=13" autocomplete="off">
+                <input class='categoryInput' type="text" id='category' placeholder="Category" onkeyup="filterFunction(this,event)" onkeypress="return event.keyCode!=13" autocomplete="off">
                 <ul>
                     <li>Missouri S&t</li>
                     <li>Saint Louis Univerity</li>
@@ -225,11 +321,76 @@ $('document').ready(function(){
         <button type='button' id='searchButton'>Search</button><p>
         </form>
     </div>
-<div id='answerBox'>
-    <div id='answerNotFound' style='display: none;'>
-        <font color='white' size='6'>You're the first to ask this question!</font>
+    <div id='payBox'>
+    <div id='checkoutText' style='grid-area: checkoutText'>
+        <br>
+        <font size='5' >You're the first to ask this question!</font>
+        <br>
+        <br>
+        <font size='5'>Total: </font><font size='5' color='turquoise'>$0.50</font>
     </div>
-</div>
+    <div id='checkout'>
+        <div id='checkoutOptions'>
+            <font id='payNow' class='selected'>Pay Now</font> 
+            <font id='payLater' >Pay Later</font> 
+            <font id='loginOption' >Login</font> 
+            <font id='goUnlimited' >Go Unlimited</font> 
+        </div>
+        <div id='payNowInfo' class='checkoutScreens' style='grid-area: info'>
+            <font>credit card number</font>
+        </div>
+        <div id='payLaterInfo' class='checkoutScreens'>
+            <font>phone number</font>
+        </div>
+        <div id='loginInfo' class='checkoutScreens'>
+            <font>email, password</font>
+        </div>
+        <div id='goUnlimitedInfo' class='checkoutScreens'>
+            <font>email, password, credit card info, phone number</font>
+        </div>
+    </div>
+    </div>
+    <div id='answerBox'>
+        <div id='answerNotFound'>
+            <font color='white' size='5' >You're the first to ask this question!</font><p>
+            <br>
+            <div id='finalQuestion'>
+                <textarea id='finalQuestionTextArea'></textarea>
+                <div id='finalCategories'>
+                    <div class="searchable" id='schoolDiv'>
+                        <input class='categoryInput' type="text" id='school' placeholder="School" onkeyup="filterFunction(this,event)" onkeypress="return event.keyCode!=13" autocomplete="off">
+                        <ul class='list'>
+                            <li class='listItem'>None</li>
+                            {% for key,value in schools.items %}
+                                <li class='listItem'>{{ key }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="searchable" id='classDiv'>
+                        <input class='categoryInput' type="text" id='class' placeholder="Class" onkeyup="filterFunction(this,event)" onkeypress="return event.keyCode!=13" autocomplete="off">
+                        <ul class='list' id='selectSchool'>
+                            <li>Select school</li>
+                        </ul>
+                        {% for school, classes in schools.items %}
+                        <ul id='{{ school|removeSpaces }}'>
+                            {% for class in classes %}
+                            <li class='listItem'>{{ class }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endfor %}
+                    </div>
+                    <!--<div id='orDiv'><font size='5' color='white' ></font></div>-->
+                    <div class="searchable" id='categoryDiv'>
+                        <input class='categoryInput' type="text" id='category' placeholder="Category" onkeyup="filterFunction(this,event)" onkeypress="return event.keyCode!=13" autocomplete="off">
+                        <ul>
+                            <li>Missouri S&t</li>
+                            <li>Saint Louis Univerity</li>
+                        </ul>
+                    </div>
+                </div><p>
+            </div>
+        </div>
+    </div>
 </div>
 
 

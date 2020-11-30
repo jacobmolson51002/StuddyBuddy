@@ -42,6 +42,8 @@ auth = firebase.auth()
 def hello(request):
     #admin = auth.sign_in_with_email_and_password('jacobmolson51002@gmail.com', 'Qweruiop1535!')
     #getSchools = db.child("basicusers").get()
+    
+    '''
     getTestQuery = db.collection('missouri s&t').document('calculus 1')
     testQuery = getTestQuery.get()
     print(testQuery.to_dict())
@@ -51,8 +53,8 @@ def hello(request):
     content = {
         'schools': schools
     }
-    print(content)
-    return render(request, 'UserApp/index.html', content)
+    print(content)'''
+    return render(request, 'UserApp/index.html')
 	
 def safeSearch(text):
     newText = ''
@@ -224,7 +226,7 @@ def generateQuestionKey(text):
 					if letter == chr(i) and i != 0:
 						numToAdd *= i
 			random.seed(numToAdd + uniqueNum)
-			id += keyChars[random.randint(0,len(keyChars))]
+			id += keyChars[random.randint(0,len(keyChars) - 1)]
 		else:
 			numToAdd = 0
 			for letter in listOfWords[i]:
@@ -232,5 +234,5 @@ def generateQuestionKey(text):
 					if letter == chr(i):
 						numToAdd += i
 			random.seed(numToAdd + uniqueNum)
-			id += keyChars[random.randint(0,len(keyChars))]
+			id += keyChars[random.randint(0,len(keyChars) - 1)]
 	return id

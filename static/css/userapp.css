@@ -1,8 +1,8 @@
 body {
 	margin: 0;
-	background-color: #0F0A0A;  /*#0F0A0A*/
+	background-color: #171717;  /*#0F0A0A*/
 	text-align: center;
-	position: relative;
+
 	font-weight: bold;
 	display: grid;
 	grid-template-columns: auto 981px auto;
@@ -14,6 +14,7 @@ body {
 
 /*top bar styling*/
 #loginBar{
+    z-index: 100;
 	grid-area: loginBar;
 	height: 53px;
 	width: 100%;
@@ -27,7 +28,7 @@ body {
 	grid-area: logo;
 	width: 100%;
 	height: 100%;
-	color: white;
+	color: #eeeeee;
 	text-align: center;
 	position: relative;
 	font-size: 25px;
@@ -40,7 +41,7 @@ body {
 	grid-area: loginRegister;
 	width: 100%;
 	height: 100%;
-	color: white;
+	color: #eeeeee;
 	text-align: center;
 	font-size: 18px;
 	padding-top: 16px;
@@ -50,7 +51,7 @@ body {
 }
 #loginButton {
 	padding-right: 4px;
-	border-right: 2px solid white;
+	border-right: 2px solid #eeeeee;
 }
 #registerButton {
 	padding-left: 6px;
@@ -60,9 +61,7 @@ body {
 /*main content styling*/
 #content{
 	grid-area: content;
-	margin-top: 100px;
 	overflow: hidden;
-	height: 700px;
 	-ms-overflow-style: none;
 }
 #content::-webkit-scrollbar {
@@ -73,7 +72,7 @@ body {
 #searchDiv{
 	/*margin-bottom: 100px;
 	width: 1320px;*/
-    overflow: hidden;
+    overflow: scroll;
 	height: 100%;
     position: relative;
 	width: 100%;
@@ -83,16 +82,15 @@ body {
 		"title"
 		"searchBar"
 		"answer";
-    border-bottom: 1px solid white;
 }
 #questionBar{
 	margin-top: 70px;
-	background-color: #0F0A0A;
+	background-color: #171717;
 	color: turquoise;
 	font-size: 34px;
 	outline: none;
 	resize: none;
-	border-bottom: 2px solid white;
+	border-bottom: 2px solid #eeeeee;
 	border-right: none;
 	border-left: none;
 	border-top: none;
@@ -109,22 +107,18 @@ body {
     
 }
 #categories font{
-    color: white;
+    color: #eeeeee;
     font-size: 20px;
     font-weight: bold;
     text-align: left;
 }
-#categories select{
-    background-color: #0F0A0A;
-    border: none;
-    text-align: center;
-    font-size: 15px;
-    color: white;
-    outline: none;
+#finalCategories{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    text-align: center;    
 }
-#categories select option{
-    background-color: white;
-}
+
 div.searchable {
     text-align: center;
     width: 100%;
@@ -136,7 +130,7 @@ div.searchable {
 /*#schoolDiv::after{
     position: absolute;
     content: "ˇ";
-    color: white;
+    color: #eeeeee;
     top: 8px;
     right: 65px;
     height: 20px;
@@ -145,7 +139,7 @@ div.searchable {
 #classDiv::after{
     position: absolute;
     content: "ˇ";
-    color: white;
+    color: #eeeeee;
     top: 8px;
     right: 72px;
     height: 20px;
@@ -154,7 +148,7 @@ div.searchable {
 #categoryDiv::after{
     position: absolute;
     content: "ˇ";
-    color: white;
+    color: #eeeeee;
     top: 8px;
     right: 57px;
     height: 20px;
@@ -182,7 +176,7 @@ div.searchable {
     outline: none;
     font-size: 20px;
     color: turquoise;
-    background-color: #0F0A0A;
+    background-color: transparent;
     box-shadow: none;
     border: none;
     width: 100%;
@@ -193,7 +187,7 @@ div.searchable {
 .searchable ul {
     display: none;
     list-style-type: none;
-    background-color: #0F0A0A;
+    background-color: #171717;
     max-height: 180px;
     margin: 0;
     overflow-y: scroll;
@@ -212,12 +206,12 @@ div.searchable {
 }
 
 .searchable ul li.selected {
-    color: white;
+    color: #eeeeee;
 }
 /*button styling */
 #searchButton{
 	transition: 0.05s;
-	background-color: #0F0A0A;
+	background-color: #171717;
 	border: 2px solid turquoise;
 	width: 130px;
 	height: 55px;
@@ -236,11 +230,109 @@ div.searchable {
 	color: black;
 }
 
+/*pay box style*/
+#payBox{
+    color: #eeeeee;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    padding-top: 10px;
+    display: grid;
+    grid-template-rows: 1fr 3fr;
+    grid-template-columns: auto auto auto;
+    grid-template-areas:
+        'checkoutText checkoutText checkoutText'
+        'e1 checkout e2';
+}
+#checkout{
+    grid-area: checkout;
+    display: grid;
+    border-top: 1px solid #eeeeee;
+    grid-template-columns: 1fr 3fr;
+    grid-template-areas:
+        'checkoutOptions info';
+}
+#checkoutOptions{
+    width: 100%;
+    height: 100%;
+    border-right: 1px solid #eeeeee;
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+}
+#checkoutOptions font{
+    align-self: center;
+    justify-self: center;
+}
+#payNow{
+    color: turquoise;
+}
+#payLater{
+    color: gray;
+}
+#loginOption{
+    color: gray;
+}
+#goUnlimited{
+    color: gray;
+}
+#payNowInfo{
+    grid-area: info;
+}
+#payLaterInfo{
+    grid-area: info;
+    display: none;
+}
+#loginInfo{
+    grid-area: info;
+    display: none;
+}
+#goUnlimitedInfo{
+    grid-area: info;
+    display: none;
+}
+
+
 /*answer box styling */
 #answerBox{
-	color: white;	
+	color: #eeeeee;	
 	width: 100%;
 	height: 100%;	
+    display: grid;
+    grid-template-rows: 100%;
+    grid-template-columns: 100%;
+    grid-template-areas:
+        'answer';
+    text-align: center;
+}
+#answerNotFound{
+    text-align: center;
+    padding-left: 1px;
+    padding-right: 1px;
+    padding-top: 25px;
+    grid-area: answer;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: auto auto auto;
+    grid-template-areas: 
+        'e1 answerBox e2';
+}
+#answerNotFound font{
+    grid-area: answerBox;
+}
+#finalQuestion{ 
+    grid-area: answerBox;
+}
+#finalQuestionTextArea{
+    font-size: 20px;
+    background-color: #282828;
+    color: turquoise;
+    outline: none;
+    /*border: 1px solid #eeeeee;*/
+    border: none;
+    outline: none;
+    resize: none;
+    height: 80%;
 }
 
 /*form styling */

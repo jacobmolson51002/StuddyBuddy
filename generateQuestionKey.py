@@ -58,7 +58,7 @@ while True:
                         if letter == chr(i) and i != 0:
                             numToAdd *= i
                 random.seed(numToAdd + uniqueNum)
-                id += keyChars[random.randint(0,len(keyChars))]
+                id += keyChars[random.randint(0,len(keyChars) - 1)]
             else:
                 numToAdd = 0
                 for letter in listOfWords[i]:
@@ -66,7 +66,7 @@ while True:
                         if letter == chr(i):
                             numToAdd += i
                 random.seed(numToAdd + uniqueNum)
-                id += keyChars[random.randint(0,len(keyChars))]
+                id += keyChars[random.randint(0,len(keyChars) - 1)]
         print(id)
     else:
         break
