@@ -1,0 +1,14 @@
+GIT COMANDS:
+
+Get up-to-date code from github:
+
+git reset --hard HEAD
+git clean -xffd
+git pull
+
+push code to github:
+
+git add [files (use . if adding all files)]
+git status
+git commit -m '[add message]'
+git push -u origin master
