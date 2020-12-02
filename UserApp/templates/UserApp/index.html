@@ -6,6 +6,7 @@
 <title>Home</title>
 <link rel='stylesheet' type='text/css' href="{% static 'css/userapp.css' %}">
 <link href='https://fonts.googleapis.com/css?family=ABeeZee' rel='stylesheet'>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body {
     font-family: 'ABeeZee';font-size: 22px;
@@ -24,7 +25,7 @@ $('document').ready(function(){
     var windowHeight = ($(window).height() - 53).toString();
     var contentHeight = windowHeight + 'px';
     var contentWidth = ($('#content').width() * 0.8).toString();
-    var checkoutWidth = 
+	var user = [];
     $('#content').css('height', contentHeight);
     $('#questionBar').focus();
     $('#checkout')
@@ -258,6 +259,36 @@ $('document').ready(function(){
             $(this).css('cursor', 'pointer');
         }
     });
+	
+	$('#loginButton').click(function(){
+		$('#loginOrRegisterPage').css('display', 'grid');
+		$('#payBox').css('display', 'none');
+		$("#content").animate({scrollTop: contentHeight}, 'fast');
+	});
+	$('#loginBoxButton').click(function(){
+		var email = $('#loginBoxEmail').val();
+		var password = $('#loginBoxPassword').val();
+		$.ajax({
+			url: '{% url "login" %}',
+			type: 'POST',
+			data: {email:email, password:password, csrfmiddlewaretoken:'{{ csrf_token }}'},
+			success: function(data){
+				if(data == 'User logged in'){
+					//get user information store it in user array
+					$("#content").animate({scrollTop: 0}, 'fast');
+					setTimeout(function () {
+						$('#loginOrRegisterPage').css('display', 'none');
+						$('#loggedInPayBox').css('display', 'grid');
+					}, 10);
+				}else{
+					$('#loginBoxResponse').html(data);
+				}
+
+			}
+		});
+	});
+	
+	
 });	
 
 </script>
@@ -283,6 +314,7 @@ $('document').ready(function(){
             <font style='font-size: 15px; color: turquoise;'>$0.50/question or $5/month for unlimited questions</font>
         </div><p>
         
+		<div>
         <textarea id='questionBar' name='searchQuestion' rows='1' cols='50'></textarea><p><script src='{% static "js/autosize-master/dist/autosize.js" %}'></script><script>autosize(document.getElementById('questionBar'));</script>
         
         <div id='categories'>
@@ -317,10 +349,24 @@ $('document').ready(function(){
                     <li>Saint Louis Univerity</li>
                 </ul>
             </div>
-        </div><p>
+        </div>
+		</div><p>
         <button type='button' id='searchButton'>Search</button><p>
+		<div id='emptySpace'></div>
         </form>
     </div>
+	<div id='loginOrRegisterPage'>
+	<form method='post'>
+	{% csrf_token %}
+	<input id='loginBoxEmail' placeholder='email'></input>
+	<input id='loginBoxPassword' placeholder='password'></input>
+	<button type='button' id='loginBoxButton'>Login</button><p>
+	<font id='loginBoxResponse'></font>
+	</form>
+	</div>
+	<div id='loggedInPayBox'>
+		<font color='white' size='5'>test</font>
+	</div>
     <div id='payBox'>
     <div id='checkoutText' style='grid-area: checkoutText'>
         <br>

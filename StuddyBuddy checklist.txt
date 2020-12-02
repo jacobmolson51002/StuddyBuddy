@@ -1,0 +1,44 @@
+STEPS FOR STUDDYBUDDY LAUNCH:
+
+
+Finish User Web App:
+ - finish sign in
+ - finish aesthetics
+ - finish basic functionality
+ - add stripe test API keys to it
+ - make responsive web design
+ 
+Finish Database Design:
+ - design to minimize cost(low reads) and maximize scalability (more docs)
+ - design system to determine size of doc and adjust to new doc accordingly
+ - use subcollections for various things, including storing questions asked by users and answered by tutors
+
+Make User IOS App:
+ - make it similar to the mobile version of the responsive website
+ - add server code into the app (do all the stuff django does but in the app itself)
+ - learn how to read text files
+ 
+Make Tutor Web App:
+ - make system where tutors have questions for them specifically (that the user side app finds), and also has recommended questions (that the local tutor side finds)
+ - figure out question expiry thing (move the questions around to different tutors after a certain amount of time)
+ - see how much money they've earned and how many points they have in the app
+ - aesthetic similar to paybox on user app
+ - tutors able to search through many categories and find questions in each one. 
+ - have them fill out w2 and legal stuff, use stripe ACH API to give them their payout at the end of the week / month
+ - figure out system for how time factors into how much they get paid
+ - make it responsive
+ 
+Make Tutor IOS App:
+ - it will be separate from the user app, but does the same as what the website does for tutors
+ - make it look pretty
+ - notify tutors when they have a question specifically for them, give time stamp and stuff
+
+Other things:
+ - make logos
+ - make privacy policy and terms of use
+ - get LLC
+ - figure out w2 form for tutors
+ - get bank account open for StuddyBuddy, hook up real stripe API keys to app
+ - learn how to use EC2 and find the right instance
+ - learn how to launch django onto ec2
+ 

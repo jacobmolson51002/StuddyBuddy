@@ -53,9 +53,32 @@ body {
 	padding-right: 4px;
 	border-right: 2px solid #eeeeee;
 }
+#loginButton:hover{
+	color: turquoise;
+	cursor: pointer;
+}
 #registerButton {
 	padding-left: 6px;
 }
+#registerButton:hover{
+	color: turquoise;
+	cursor: pointer;
+}
+
+#loggedInPayBox{
+	width: 100%;
+	height: 100%;
+	display: none;
+}
+
+/*login or register page styling*/
+#loginOrRegisterPage{
+	width: 100%;
+	height: 100%;
+	display: none;
+}
+
+
 
 
 /*main content styling*/
@@ -69,19 +92,28 @@ body {
 }
 
 /*search bar styling*/
+#searchDiv::-webkit-scrollbar{
+	display: none;
+}
 #searchDiv{
 	/*margin-bottom: 100px;
 	width: 1320px;*/
+	-ms-overflow-style: none;
     overflow: scroll;
 	height: 100%;
     position: relative;
 	width: 100%;
+}
+#searchDiv form{
+	width: 100%;
+	height: 100%;
 	display: grid;
-	grid-template-rows: 1fr 1fr 1fr;
+	grid-template-rows: 1fr 1fr 1fr 2fr;
 	grid-template-areas:
 		"title"
 		"searchBar"
-		"answer";
+		"button"
+		'empty';
 }
 #questionBar{
 	margin-top: 70px;

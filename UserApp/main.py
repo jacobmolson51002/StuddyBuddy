@@ -2,7 +2,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 import firebase_admin
-from firebase_admin import credentials, firestore, storage
+from firebase_admin import credentials, firestore, storage, auth
 import random
 from urllib.parse import quote
 import time
@@ -34,9 +34,29 @@ config = {
 firebase = pyrebase.initialize_app(config)
 files = firebase.storage()
 #db = firebase.database()
-auth = firebase.auth()
+#auth = firebase.auth()
 
 
+
+def login(request):
+	email = request.POST.get('email')
+	password = request.POST.get('password')
+	try:
+		user = auth.get_user_by_email(email)
+		print(user.uid)
+		if user.password == password:
+			return HttpResponse('User logged in')
+		else:
+			return HttpResponse('Password incorrect')
+			
+	except Exception as e:
+		print('ERROR: ' + str(e))
+		if 'No user record found for the provided email' in str(e):
+			#return HttpResponse("We couldn't find that email")
+			return HttpResponse('Invalid email')
+		else:
+			return HttpResponse('')
+	
 
 
 def hello(request):
