@@ -7,6 +7,7 @@ Finish User Web App:
  - finish basic functionality
  - add stripe test API keys to it
  - make responsive web design
+ - learn how to use MeiliSearch with firebase to search for questions
  
 Finish Database Design:
  - design to minimize cost(low reads) and maximize scalability (more docs)
