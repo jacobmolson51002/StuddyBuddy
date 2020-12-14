@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<head>
+<title>Home</title>
+<link rel='stylesheet' type='text/css' href="{% static 'css/userapp.css' %}">
+<link href='https://fonts.googleapis.com/css?family=ABeeZee' rel='stylesheet'>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+    font-family: 'ABeeZee';font-size: 22px;
+}
+.searchable input{
+    font-family: 'ABeeZee';
+}
+#categories font{
+    font-family: 'ABeeZee';
+}
+</style>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<script src='{% static "js/jquery.js" %}'></script>
+<script>
+$('document').ready(function(){
+    var windowHeight = ($(window).height() - 53).toString();
+    var contentHeight = windowHeight + 'px';
+    var contentWidth = ($('#content').width() * 0.8).toString();
+	var user = [];
+    $('#content').css('height', contentHeight);
+    $('#questionBar').focus();
+    $('#checkout')
+	$('#searchButton').click(function(){
+		var question = $('#questionBar').val();
+        var school = $('#school').val();
+        var classVar = $('#class').val();
+        var category = $('#category').val();
+		$.ajax({
+			url: '{% url "search" %}',
+			type: 'POST',
+			data: {question:question, school:school, class:classVar, category:category, csrfmiddlewaretoken: '{{ csrf_token }}'},
+			success: function(data){
+                if(data != "not found"){
+                    originalUrl = '{% url "question" "questionToSearch" %}';
+                    newUrl = originalUrl.replace('questionToSearch', data);
+                    window.location.assign(newUrl);
+                }else{
+                    /*
+                    var currentContentHeight = ($('#content').height() * 0.5).toString();
+                    var currentContentWidth = ($('#content').width() * 0.6).toString();
+                    var finalQuestionHeight = currentContentHeight + 'px';
+                    var finalQuestionWidth = currentContentWidth + 'px';*/
+                    var currentContentHeight = ($('#content').height() * 0.6).toString();
+                    var currentContentWidth = ($('#content').width() * 0.8).toString();
+                    var checkoutHeight = currentContentHeight + 'px';
+                    var checkoutWidth = currentContentWidth + 'px';
+                    $('#checkout').css('height', checkoutHeight);
+                    $('#checkout').css('width', checkoutWidth);
+                    $('#finalQuestionTextArea').val(question);
+                    $('#finalQuestionTextArea').css('width', '100%');
+                    //$("#answerNotFound").css('display', 'grid');
+                    $("#content").animate({scrollTop: contentHeight}, 'fast');
+				    $('#content').css('overflow', 'hidden');
+                }
+				
+			}
+		});
+	});
+    
+    function filterFunction(that, event) {
+        let container, input, filter, li, input_val;
+        container = $(that).closest(".searchable");
+        input_val = container.find("input").val().toUpperCase();
+
+        if (["ArrowDown", "ArrowUp", "Enter"].indexOf(event.key) != -1) {
+            keyControl(event, container)
+        } else {
+            li = container.find("ul li");
+            li.each(function (i, obj) {
+                if ($(this).text().toUpperCase().indexOf(input_val) > -1) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+
+            container.find("ul li").removeClass("selected");
+            setTimeout(function () {
+                container.find("ul li:visible").first().addClass("selected");
+            }, 1)
+        }
+    }
+    function getClassList(school){
+        var idName = school.replace(/\s+/g, '');
+        if(idName == 'None'){
+            idName = 'selectSchool';
+        }
+        $('#classDiv ul').each(function(){
+            $(this).removeClass('list'); 
+        });
+        var element = document.getElementById(idName);
+        $(element).addClass('list');
+        $('#class').val('');
+    }
+    function keyControl(e, container) {
+        if (e.key == "ArrowDown") {
+
+            if (container.find("ul li").hasClass("selected")) {
+                if (container.find("ul li:visible").index(container.find("ul li.selected")) + 1 < container.find("ul li:visible").length) {
+                    container.find("ul li.selected").removeClass("selected").nextAll().not('[style*="display: none"]').first().addClass("selected");
+                }
+
+            } else {
+                container.find("ul li:first-child").addClass("selected");
+            }
+
+        } else if (e.key == "ArrowUp") {
+
+            if (container.find("ul li:visible").index(container.find("ul li.selected")) > 0) {
+                container.find("ul li.selected").removeClass("selected").prevAll().not('[style*="display: none"]').first().addClass("selected");
+            }
+        } else if (e.key == "Enter") {
+            var selection = container.find("ul li.selected").text();
+            container.find("input").val(selection).blur();
+            //onSelect(selection);
+            if(container.children('input').attr('id') == 'school'){
+                getClassList(selection); 
+            }
+        }
+    }
+    $(document).on("click", ".listItem", function () {
+        if($(this).parents('ul').siblings('input').attr('id') == 'school' && $(this).text() == 'None'){
+            $(this).closest(".searchable").find("input").val('');
+        }else{
+            $(this).closest(".searchable").find("input").val($(this).text());
+        }
+        if($(this).parents('ul').siblings('input').attr('id') == 'school'){
+            var school = $(this).text();
+            getClassList(school);
+        }
+    });
+
+    $(".searchable input").focus(function () {
+        $(this).closest(".searchable").find(".list").show();
+        $(this).closest(".searchable").find(".list li").show();
+        $(this).attr('placeholder', ''); 
+    });
+    $(".searchable input").blur(function () {
+        let that = this;
+        setTimeout(function () {
+            $(that).closest(".searchable").find("ul").hide();
+        }, 100);
+        if($(this).attr('id', 'school')){
+            //setTimeout(function () {
+                $(this).attr('placeholder', 'School'); 
+            //}, 99);
+        }else if($(this).attr('id', 'class')){
+            //setTimeout(function () {
+                $(this).attr('placeholder', 'Class'); 
+           // }, 99);
+        }else{
+            //setTimeout(function () {
+                $(this).attr('placeholder', 'Category'); 
+            //}, 99);
+        }
+    });
+
+    $(".searchable ul li").hover(function () {
+        $(this).closest(".searchable").find("ul li.selected").removeClass("selected");
+        $(this).addClass("selected");
+    });
+	/*$("#questionBar").keydown(function(e) {
+		while($(this).outerHeight() < this.scrollHeight + parseFloat($(this).css("borderTopWidth")) + parseFloat($(this).css("borderBottomWidth"))) {
+        $(this).height($(this).height()+1);
+    };*/
+    $('#school').keyup(function(){
+        filterFunction(this,event);
+    });
+    $('#class').keyup(function(){
+        filterFunction(this,event);
+    });
+    $('#category').keyup(function(){
+        filterFunction(this,event);
+    });
+    $('#checkoutOptions font').on('mouseover', function(){
+        $(this).css('cursor', 'pointer');
+        if($(this).hasClass('selected') == false){
+            $(this).css('color', '#eeeeee'); 
+        }
+    });
+    $('#checkoutOptions font').on('mouseout', function(){
+        if($(this).hasClass('selected') == false){
+            $(this).css('color', 'gray'); 
+        }
+    });
+    $('#payNow').click(function(){
+        selectOptions($(this));
+    });
+    $('#payLater').click(function(){
+        selectOptions($(this));
+    });
+    $('#loginOption').click(function(){
+        selectOptions($(this));
+    });
+    $('#goUnlimited').click(function(){
+        selectOptions($(this));
+    });
+    function selectOptions(option){
+        $('.checkoutScreens').each(function(){
+            $(this).hide();
+        });
+        $('#checkoutOptions font').each(function(){
+            if($(this).hasClass('selected')){
+                $(this).removeClass('selected');
+                $(this).css('color', 'gray');
+            }
+        });
+        option.css('color', 'turquoise');
+        option.addClass('selected');
+        if(option.attr('id') == 'payNow'){
+            $('#payNowInfo').show();
+        }else if(option.attr('id') == 'payLater'){
+            $('#payLaterInfo').show();
+        }else if(option.attr('id') == 'loginOption'){
+            $('#loginInfo').show();
+        }else{
+            $('#goUnlimitedInfo').show();
+        }
+    }
+    /*$('.categoryInput').focus(function(){
+        $(this).attr('placeholder', ''); 
+    });
+    $('.categoryInput').blur(function(){
+        if($(this).attr('id', 'school')){
+            setTimeout(function () {
+                $(this).attr('placeholder', 'School'); 
+            }, 100);
+        }else if($(this).attr('id', 'class')){
+            setTimeout(function () {
+                $(this).attr('placeholder', 'Class'); 
+            }, 100);
+        }else{
+            setTimeout(function () {
+                $(this).attr('placeholder', 'Category'); 
+            }, 100);
+        }
+    });*/
+    var ar = new Array(33,34,35,36,37,38,39,40);
+
+    $(document).keydown(function(e) {
+         var key = e.which;
+          //console.log(key);
+          //if(key==35 || key == 36 || key == 37 || key == 39)
+          if($.inArray(key,ar) > -1) {
+              e.preventDefault();
+          }
+    });
+    $('.searchable').hover(function(){
+        if($(this).children('ul').is(":hidden")){
+            $(this).css('cursor', 'pointer');
+        }
+    });
+	
+	$('#loginButton').click(function(){
+		$('#loginOrRegisterPage').css('display', 'grid');
+		$('#payBox').css('display', 'none');
+		$("#content").animate({scrollTop: contentHeight}, 'fast');
+	});
+	$('#loginBoxButton').click(function(){
+		var email = $('#loginBoxEmail').val();
+		var password = $('#loginBoxPassword').val();
+		$.ajax({
+			url: '{% url "login" %}',
+			type: 'POST',
+			data: {email:email, password:password, csrfmiddlewaretoken:'{{ csrf_token }}'},
+			success: function(data){
+				if(data == 'User logged in'){
+					//get user information store it in user array
+					$("#content").animate({scrollTop: 0}, 'fast');
+					setTimeout(function () {
+						$('#loginOrRegisterPage').css('display', 'none');
+						$('#loggedInPayBox').css('display', 'grid');
+					}, 10);
+				}else{
+					$('#loginBoxResponse').html(data);
+				}
+
+			}
+		});
+	});
+	
+	
+});	
+
+</script>
+</head>
+<body>
+<div id='loginBar'>
+<div id='logo'>
+<font>SB</font>
+</div>
+<div id='loginOrRegister'>
+<font id='loginButton'>Login </font>
+<font id='registerButton'> Register</font>
+</div>
+</div>
+
+<div id='content'>
+    <div id='searchDiv'>
+    <!--<font>Ask Away</font>-->
+    <form method='post'>
+        {% csrf_token %}
+        <div>
+            <h1 style='color: white;'>Ask Anything</h1><p>
+            <font style='font-size: 15px; color: turquoise;'>$0.50/question or $5/month for unlimited questions</font>
+        </div><p>
+        
+		<div>
+        <textarea id='questionBar' name='searchQuestion' rows='1' cols='50'></textarea><p><script src='{% static "js/autosize-master/dist/autosize.js" %}'></script><script>autosize(document.getElementById('questionBar'));</script>
+        
+        <div id='categories'>
+            <font id='filterDiv' >Optional Filters: </font>
+            <div class="searchable" id='schoolDiv'>
+                <input class='categoryInput' type="text" id='school' placeholder="School" onkeyup="filterFunction(this,event)" onkeypress="return event.keyCode!=13" autocomplete="off">
+                <ul class='list'>
+                    <li class='listItem'>None</li>
+                    {% for key,value in schools.items %}
+                        <li class='listItem'>{{ key }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="searchable" id='classDiv'>
+                <input class='categoryInput' type="text" id='class' placeholder="Class" onkeyup="filterFunction(this,event)" onkeypress="return event.keyCode!=13" autocomplete="off">
+                <ul class='list' id='selectSchool'>
+                    <li>Select school</li>
+                </ul>
+                {% for school, classes in schools.items %}
+                <ul id='{{ school|removeSpaces }}'>
+                    {% for class in classes %}
+                    <li class='listItem'>{{ class }}</li>
+                    {% endfor %}
+                </ul>
+                {% endfor %}
+            </div>
+            <!--<div id='orDiv'><font size='5' color='white' ></font></div>-->
+            <div class="searchable" id='categoryDiv'>
+                <input class='categoryInput' type="text" id='category' placeholder="Category" onkeyup="filterFunction(this,event)" onkeypress="return event.keyCode!=13" autocomplete="off">
+                <ul>
+                    <li>Missouri S&t</li>
+                    <li>Saint Louis Univerity</li>
+                </ul>
+            </div>
+        </div>
+		</div><p>
+        <button type='button' id='searchButton'>Search</button><p>
+		<div id='emptySpace'></div>
+        </form>
+    </div>
+	<div id='loginOrRegisterPage'>
+	<form method='post'>
+	{% csrf_token %}
+	<input id='loginBoxEmail' placeholder='email'></input>
+	<input id='loginBoxPassword' placeholder='password'></input>
+	<button type='button' id='loginBoxButton'>Login</button><p>
+	<font id='loginBoxResponse'></font>
+	</form>
+	</div>
+	<div id='loggedInPayBox'>
+		<font color='white' size='5'>test</font>
+	</div>
+    <div id='payBox'>
+    <div id='checkoutText' style='grid-area: checkoutText'>
+        <br>
+        <font size='5' >You're the first to ask this question!</font>
+        <br>
+        <br>
+        <font size='5'>Total: </font><font size='5' color='turquoise'>$0.50</font>
+    </div>
+    <div id='checkout'>
+        <div id='checkoutOptions'>
+            <font id='payNow' class='selected'>Pay Now</font> 
+            <font id='payLater' >Pay Later</font> 
+            <font id='loginOption' >Login</font> 
+            <font id='goUnlimited' >Go Unlimited</font> 
+        </div>
+        <div id='payNowInfo' class='checkoutScreens' style='grid-area: info'>
+            <font>credit card number</font>
+        </div>
+        <div id='payLaterInfo' class='checkoutScreens'>
+            <font>phone number</font>
+        </div>
+        <div id='loginInfo' class='checkoutScreens'>
+            <font>email, password</font>
+        </div>
+        <div id='goUnlimitedInfo' class='checkoutScreens'>
+            <font>email, password, credit card info, phone number</font>
+        </div>
+    </div>
+    </div>
+    <div id='answerBox'>
+        <div id='answerNotFound'>
+            <font color='white' size='5' >You're the first to ask this question!</font><p>
+            <br>
+            <div id='finalQuestion'>
+                <textarea id='finalQuestionTextArea'></textarea>
+                <div id='finalCategories'>
+                    <div class="searchable" id='schoolDiv'>
+                        <input class='categoryInput' type="text" id='school' placeholder="School" onkeyup="filterFunction(this,event)" onkeypress="return event.keyCode!=13" autocomplete="off">
+                        <ul class='list'>
+                            <li class='listItem'>None</li>
+                            {% for key,value in schools.items %}
+                                <li class='listItem'>{{ key }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="searchable" id='classDiv'>
+                        <input class='categoryInput' type="text" id='class' placeholder="Class" onkeyup="filterFunction(this,event)" onkeypress="return event.keyCode!=13" autocomplete="off">
+                        <ul class='list' id='selectSchool'>
+                            <li>Select school</li>
+                        </ul>
+                        {% for school, classes in schools.items %}
+                        <ul id='{{ school|removeSpaces }}'>
+                            {% for class in classes %}
+                            <li class='listItem'>{{ class }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endfor %}
+                    </div>
+                    <!--<div id='orDiv'><font size='5' color='white' ></font></div>-->
+                    <div class="searchable" id='categoryDiv'>
+                        <input class='categoryInput' type="text" id='category' placeholder="Category" onkeyup="filterFunction(this,event)" onkeypress="return event.keyCode!=13" autocomplete="off">
+                        <ul>
+                            <li>Missouri S&t</li>
+                            <li>Saint Louis Univerity</li>
+                        </ul>
+                    </div>
+                </div><p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+</body>
+
+
+
+
+
+</html>
