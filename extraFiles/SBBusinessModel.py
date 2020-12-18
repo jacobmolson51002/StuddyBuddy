@@ -36,16 +36,16 @@ def getTaxes(money, entity='tutor'):
 
     return taxes
 
-def main():
+def main(taxNums=False, costPerQuestion=0.0, costPerAnswer=0.0, nonSubscribers=0.0, subscribers=0.0, tutors=0.0, categories=0.0, schools=0.0):
     #get info
-    costPerQuestion = float(input('cost per question?: $'))
-    costPerAnswer = float(input('cost per answer?: $'))
-    bt = input('are you using braintree or a merchant account? (b/m): ')
-    nonSubscribers = float(input('enter number of non-subscribed users that used services: '))
-    subscribers = float(input('enter number of paying subscribers: '))
-    tutors = float(input('enter nu  mber of tutors: '))
-    categories = float(input('enter number of categories to search through: '))
-    schools = float(input('enter average number of categories per school: '))
+    if taxNums == False:
+        costPerQuestion = float(input('cost per question?: $'))
+        costPerAnswer = float(input('cost per answer?: $'))
+        nonSubscribers = float(input('enter number of non-subscribed users that used services: '))
+        subscribers = float(input('enter number of paying subscribers: '))
+        tutors = float(input('enter nu  mber of tutors: '))
+        categories = float(input('enter number of categories to search through: '))
+        schools = float(input('enter average number of categories per school: '))
     schools = categories / schools
     profit = 0
 
@@ -160,8 +160,8 @@ def main():
 
     #determine taxes
     #taxes = getTaxes(leftOver, 'month')
-    print(getTaxes(leftOver * 12) / 12)
-    print(getTaxes(leftOver * 12) / 4)
+    '''print(getTaxes(leftOver * 12) / 12)
+    print(getTaxes(leftOver * 12) / 4)'''
     taxes = (getTaxes(leftOver * 12, entity='business') / 12) * 1.1
 
     yearlyTaxable = leftOver
@@ -170,48 +170,48 @@ def main():
     #determine total profit
     profit = leftOver - taxes
 
+    if taxNums == False:
+        print('Total Revenue: $' + str(revenue))
+        print('     + $'+str(subscriberRevenue)+' (subscriber revenue) ('+str(totalUse)+' total subscriber questions)')
+        print('     + $'+str(userRevenue)+' (userRevenue) ('+str(totalPayUse)+' total user questions, '+str(totalAnswerViews)+' total user answers viewed)')
+        print('     - $'+str(stripeFee)+' (Stripe fee)')
+        print('Total Expenses: $'+str(revenue - profit))
 
-    print('Total Revenue: $' + str(revenue))
-    print('     + $'+str(subscriberRevenue)+' (subscriber revenue) ('+str(totalUse)+' total subscriber questions)')
-    print('     + $'+str(userRevenue)+' (userRevenue) ('+str(totalPayUse)+' total user questions, '+str(totalAnswerViews)+' total user answers viewed)')
-    print('     - $'+str(stripeFee)+' (Stripe fee)')
-    print('Total Expenses: $'+str(revenue - profit))
+        #print user authentication cost
+        print('     - $' + str(userAuth) + ' : user authentication cost(FireBase)')
 
-    #print user authentication cost
-    print('     - $' + str(userAuth) + ' : user authentication cost(FireBase)')
+        #print ec2 costs
+        #print('     - $' + str(results[6]) + ' : amazon ec2 c6g.large cost (' + str(results[7]) + ') instances')
 
-    #print ec2 costs
-    #print('     - $' + str(results[6]) + ' : amazon ec2 c6g.large cost (' + str(results[7]) + ') instances')
+        #print storage cost
+        print('     - $' + str(storageCost) + ' : FireStore question & answer storage costs')
 
-    #print storage cost
-    print('     - $' + str(storageCost) + ' : FireStore question & answer storage costs')
+        #print db reads
+        print('     - $' + str(reads) + ' : total cost of db reads (' + str(totalQuestions) + ' total questions * ' + str(tutorDocs) + ' average tutors per category)')
 
-    #print db reads
-    print('     - $' + str(reads) + ' : total cost of db reads (' + str(totalQuestions) + ' total questions * ' + str(tutorDocs) + ' average tutors per category)')
+        #print tutor payout
+        #print('     - $' + str(results[13]) + ' : tutor payout')
 
-    #print tutor payout
-    #print('     - $' + str(results[13]) + ' : tutor payout')
+        #print algolia fee
+        print('     - $'+str(algoliaFee)+' : algolia search fee ('+str(totalQuestions / 1000)+' total questions asked / 1000)')
 
-    #print algolia fee
-    print('     - $'+str(algoliaFee)+' : algolia search fee ('+str(totalQuestions / 1000)+' total questions asked / 1000)')
+        #print ad money if any
+        if ads > 0.0:
+            print('     - $' + str(ads) + ' : ad money for next month')
 
-    #print ad money if any
-    if ads > 0.0:
-        print('     - $' + str(ads) + ' : ad money for next month')
+        #print taxes
+        print('     - $' + str(taxes) + ' : monthly taxes')
 
-    #print taxes
-    print('     - $' + str(taxes) + ' : monthly taxes')
-
-    proportionalNum = (8 * schools * tutorCash) / ((tutorCash * schools) + (8 * tutorCash))
-    winningTutorCash = tutorCash * (proportionalNum / schools)
-    winningTutorCash = winningTutorCash - getTaxes(winningTutorCash)
-    avgCashPerSchoolWinner = (tutorCash - winningTutorCash) / schools
-    avgCashPerSchoolWinner = avgCashPerSchoolWinner - getTaxes(avgCashPerSchoolWinner)
-    print('     - $' + str(tutorCash)+' (tutor payout, winner: $'+str(winningTutorCash)+', school winners average: $'+str(avgCashPerSchoolWinner)+')')
-    print()
-    print('     = $' + str(profit))
-    print(yearlyTaxable)
-    print('     at this rate, tax at the end of the year is: $'+str(getTaxes((yearlyTaxable * 12), entity='business') / 4))
+        proportionalNum = (8 * schools * tutorCash) / ((tutorCash * schools) + (8 * tutorCash))
+        winningTutorCash = tutorCash * (proportionalNum / schools)
+        winningTutorCash = winningTutorCash - getTaxes(winningTutorCash)
+        avgCashPerSchoolWinner = (tutorCash - winningTutorCash) / schools
+        avgCashPerSchoolWinner = avgCashPerSchoolWinner - getTaxes(avgCashPerSchoolWinner)
+        print('     - $' + str(tutorCash)+' (tutor payout, winner: $'+str(winningTutorCash)+', school winners average: $'+str(avgCashPerSchoolWinner)+')')
+        print()
+        print('     = $' + str(profit))
+        print(yearlyTaxable)
+        print('     at this rate, tax at the end of the year is: $'+str(getTaxes((yearlyTaxable * 12), entity='business') / 4))
 
     return yearlyTaxable, taxes, profit
 
